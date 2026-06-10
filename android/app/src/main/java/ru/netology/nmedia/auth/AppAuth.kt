@@ -2,8 +2,16 @@ package ru.netology.nmedia.auth
 
 import android.content.Context
 import androidx.core.content.edit
+import com.google.firebase.Firebase
+import com.google.firebase.messaging.messaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import ru.netology.nmedia.api.PostsApi
+import ru.netology.nmedia.dto.PushToken
 
 class AppAuth(private val context: Context) {
     val pref = context.getSharedPreferences(("auth"), (Context.MODE_PRIVATE))
@@ -19,6 +27,7 @@ class AppAuth(private val context: Context) {
         if (id != 0L && !token.isNullOrEmpty()) {
             _authStateFlow.value = AuthState(id,token)
         }
+        sendPushToken()
     }
 
     fun setAuth(id: Long ,token: String?){
@@ -27,6 +36,7 @@ class AppAuth(private val context: Context) {
             putLong(KEY_ID,id)
             putString(KEY_TOKEN,token)
         }
+        sendPushToken()
     }
 
     fun removeAuth() {
@@ -34,6 +44,15 @@ class AppAuth(private val context: Context) {
         with(pref.edit()) {
             clear()
             commit()
+        }
+        sendPushToken()
+    }
+
+    fun sendPushToken(token : String? = null){
+        CoroutineScope(Dispatchers.Default).launch {
+            runCatching {
+                PostsApi.service.pushToken(PushToken(token ?: Firebase.messaging.token.await()))
+            }
         }
     }
 

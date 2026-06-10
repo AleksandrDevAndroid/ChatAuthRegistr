@@ -40,7 +40,7 @@ class NewPostFragment : Fragment() {
                 val fileUri = data?.data!!
                 viewModel.changePhoto(fileUri, fileUri.toFile())
             } else {
-                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), com.github.dhaval2404.imagepicker.R.string.error_task_cancelled, Toast.LENGTH_SHORT).show()
             }
         }
     override fun onCreateView(
@@ -94,7 +94,7 @@ class NewPostFragment : Fragment() {
                 .crop()
                 .compress(2048)
                 .galleryOnly()
-                .galleryMimeTypes(arrayOf("image/png", "image/jepg"))
+                .galleryMimeTypes(arrayOf("image/png", "image/jpeg"))
                 .createIntent {intent -> startForProfileImageResult.launch(intent)}
         }
 

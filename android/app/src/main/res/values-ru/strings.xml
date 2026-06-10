@@ -26,15 +26,19 @@
     <string name="remove">Удалить</string>
     <string name="description_select_photo">Выбрать фото</string>
     <string name="description_take_photo">Сделать фото</string>
-    <string name="menu_save">Save\n</string>
-    <string name="sign_in">Sing up</string>
-    <string name="sign_up">Sing up\n</string>
-    <string name="sign_out">Sing out</string>
+    <string name="menu_save">Сохронить\n</string>
+    <string name="sign_in">Войти</string>
+    <string name="sign_up">Регестрация\n</string>
+    <string name="sign_out">Выйти</string>
     <string name="enter">Вход в приложение</string>
     <string name="enter_text">Пожалуйста не сообщайте ваш логин и пароль другим людям</string>
     <string name="attention">Пожалуйста не сообщайте ваш логин и пароль другим людям</string>
     <string name="attantion">Пожалуйста не сообщайте ваш логин и пароль другим людям</string>
-    <string name="emptyLoginOrPass">Login or pass can not empty</string>
-    <string name="tryAgain">Try again,wrong login or pass</string>
-    <string name="register">"Register your accaunt "</string>
+    <string name="emptyLoginOrPass">Поле логина или пароля не могут быть пустыми</string>
+    <string name="tryAgain">Неверный логи или пароль</string>
+    <string name="register">"Регестрация аккаунта"</string>
+    <string name="notification_user_new_post">Создан новый пост\n</string>
+    <string name="notification_from_app">У вас есть уведомление\n</string>
+    <string name="incorrect_pass">Неверный пароль</string>
+    <string name="something_wrong">Что-то пошло не так</string>
 </resources>

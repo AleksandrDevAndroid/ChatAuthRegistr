@@ -188,7 +188,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository, AuthReposit
         media: File?
     ) {
         try {
-
             val part = if (media != null && media.exists()) {
                 MultipartBody.Part.createFormData("file", media!!.name, media.asRequestBody())
             } else null
@@ -196,7 +195,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository, AuthReposit
             val passReg = pass?.toRequestBody("text/plain".toMediaTypeOrNull())
             val loginReg = login.toRequestBody("text/plain".toMediaTypeOrNull())
 
-            val response = PostsApi.service.singUpWichPhoto(loginReg, passReg, nameReg, part)
+            val response = PostsApi.service.singUpWithPhoto(loginReg, passReg, nameReg, part)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

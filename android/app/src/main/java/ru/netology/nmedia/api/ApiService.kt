@@ -13,6 +13,7 @@ import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.auth.AuthState
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
+import ru.netology.nmedia.dto.PushToken
 
 private const val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 
@@ -85,12 +86,15 @@ interface PostsApiService {
 
     @Multipart
     @POST("users/registration")
-    suspend fun singUpWichPhoto(
+    suspend fun singUpWithPhoto(
         @Part("login") login: RequestBody,
         @Part("pass") pass: RequestBody?,
         @Part("name") name: RequestBody?,
         @Part media: MultipartBody.Part?,
     ): Response<AuthState>
+
+    @POST("users/push-token")
+    suspend fun pushToken(@Body token: PushToken): Response<Unit>
 
 }
 
