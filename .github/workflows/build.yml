@@ -23,13 +23,14 @@ jobs:
       - name: Decode google-services.json
         env:
           FIREBASE_SECRET: ${{ secrets.FIREBASE_SECRET }}
+        # Создаем файл строго внутри подпапки android/app/
         run: |
-          echo "Текущая папка:" && pwd
-          echo "Содержимое корня:" && ls -la
-          mkdir -p app
-          echo "$FIREBASE_SECRET" > ./app/google-services.json
+          mkdir -p android/app
+          echo "$FIREBASE_SECRET" > ./android/app/google-services.json
 
-      - name: Build
+      - name: Build Android App
+        # working-directory заставляет команду выполняться внутри папки android
+        working-directory: ./android
         run: |
           chmod +x ./gradlew
           ./gradlew assembleDebug
@@ -38,4 +39,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug
-          path: app/build/outputs/apk/debug/*.apk
+          # Путь к APK теперь также учитывает папку android
+          path: android/app/build/outputs/apk/debug/*.apk
