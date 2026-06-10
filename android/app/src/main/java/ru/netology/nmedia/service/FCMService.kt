@@ -49,12 +49,14 @@ class FCMService : FirebaseMessagingService() {
         val push = gson.fromJson(message.data[content], PushWithId::class.java)
 
         //TODO
+
         handlePush(push.content)
     }
 
     override fun onNewToken(token: String) {
         AppAuth.getInstance().sendPushToken()
     }
+
     fun notify(notification: Notification) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
@@ -62,6 +64,7 @@ class FCMService : FirebaseMessagingService() {
             NotificationManagerCompat.from(this).notify(Random.nextInt(100_000), notification)
         }
     }
+
     fun handlePush(content: String) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_stat_name)
