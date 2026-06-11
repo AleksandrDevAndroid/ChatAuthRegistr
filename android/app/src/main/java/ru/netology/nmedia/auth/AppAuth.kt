@@ -1,6 +1,7 @@
 package ru.netology.nmedia.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.core.content.edit
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 import ru.netology.nmedia.api.PostsApi
 import ru.netology.nmedia.dto.PushToken
 
@@ -36,6 +38,8 @@ class AppAuth(private val context: Context) {
             putLong(KEY_ID,id)
             putString(KEY_TOKEN,token)
         }
+        Log.e("myID" ,"ID:${getInstance().authState.value.id}")
+
         sendPushToken()
     }
 

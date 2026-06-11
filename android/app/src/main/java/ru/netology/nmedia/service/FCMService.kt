@@ -46,11 +46,23 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        val push = gson.fromJson(message.data[content], PushWithId::class.java)
+        try {
+            val push = gson.fromJson(message.data[content], PushWithId::class.java)
+            val myID = AppAuth.getInstance().authState.value.id
+            when {
+                push.recipientId == null -> handlePush(push.content)
 
-        //TODO
+                push.recipientId == myID -> handlePush(push.content)
 
-        handlePush(push.content)
+                push.recipientId == 0L && push.recipientId != myID -> AppAuth.getInstance().sendPushToken()
+
+                push.recipientId != 0L && push.recipientId != myID -> AppAuth.getInstance().sendPushToken()
+
+            }
+        } catch (e: Exception) {
+            Log.e("FCM Service", "Error notification")
+        }
+
     }
 
     override fun onNewToken(token: String) {
@@ -76,6 +88,6 @@ class FCMService : FirebaseMessagingService() {
 }
 
 data class PushWithId(
-    val id: Long,
+    val recipientId: Long?,
     val content: String
 )

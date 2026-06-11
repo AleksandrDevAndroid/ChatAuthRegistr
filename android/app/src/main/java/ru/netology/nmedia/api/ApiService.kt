@@ -93,8 +93,8 @@ interface PostsApiService {
         @Part media: MultipartBody.Part?,
     ): Response<AuthState>
 
-    @POST("users/push-token")
-    suspend fun pushToken(@Body token: PushToken): Response<Unit>
+    @POST("api/users/push-tokens")
+    suspend fun pushToken(@Body token: PushToken)
 
 }
 
