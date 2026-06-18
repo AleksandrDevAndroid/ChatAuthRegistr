@@ -10,12 +10,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="240dp"
+        android:layout_marginEnd="48dp"
         android:text="@string/register"
         android:textSize="28sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="#000000"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_back"
@@ -38,6 +40,7 @@
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/enter_name"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
         android:layout_width="240dp"
         android:layout_height="58dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +58,7 @@
         android:layout_width="240dp"
         android:layout_height="58dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/enter_name"
@@ -68,6 +72,7 @@
         android:layout_width="240dp"
         android:layout_height="58dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/enter_login"
@@ -81,6 +86,7 @@
         android:layout_width="240dp"
         android:layout_height="58dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/enter_pass"
@@ -95,12 +101,32 @@
         android:id="@+id/button_enter"
         android:layout_width="60dp"
         android:layout_height="58dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintStart_toEndOf="@id/enter_pass_again"
         app:layout_constraintTop_toTopOf="@id/enter_pass_again"
         android:text="Ok"
         android:clickable="true"
         app:backgroundTint="#000000"
         />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/pickPhoto"
+        style="@style/Widget.AppTheme.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description_select_photo"
+        app:icon="@drawable/outline_add_photo_alternate_24"
+        app:layout_constraintStart_toEndOf="@id/enter_name"
+        app:layout_constraintBottom_toBottomOf="@id/enter_name"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/takePhoto"
+        style="@style/Widget.AppTheme.IconButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/description_take_photo"
+        app:icon="@drawable/baseline_camera_alt_24"
+        app:layout_constraintStart_toEndOf="@id/pickPhoto"
+        app:layout_constraintBottom_toBottomOf="@id/pickPhoto"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

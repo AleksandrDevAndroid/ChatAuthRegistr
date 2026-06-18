@@ -14,5 +14,6 @@ interface PostRepository {
     suspend fun likeById(id: Long)
     suspend fun dislikeById(id: Long)
     suspend fun saveWithAttachment(post: Post, file: File)
+
 }
 

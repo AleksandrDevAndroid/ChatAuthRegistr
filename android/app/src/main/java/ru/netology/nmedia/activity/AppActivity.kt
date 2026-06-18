@@ -1,7 +1,6 @@
 package ru.netology.nmedia.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,23 +15,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
-import ru.netology.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.auth.AppAuth
+import ru.netology.nmedia.fagment.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
-import ru.netology.nmedia.fagment.AuthFragment
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
+   @Inject
+   lateinit var appAuth: AppAuth
+    private val viewModelAuth: AuthViewModel by viewModels()
 
-    private val viewModel by viewModels<AuthViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,7 +67,7 @@ class AppActivity : AppCompatActivity() {
                 )
         }
 
-        viewModel.data.observe(this) {
+        viewModelAuth.data.observe(this) {
             invalidateOptionsMenu()
         }
 
@@ -81,8 +81,8 @@ class AppActivity : AppCompatActivity() {
             }
 
             override fun onPrepareMenu(menu: Menu) {
-                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
-                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
+                menu.setGroupVisible(R.id.unauthenticated, !viewModelAuth.authenticated)
+                menu.setGroupVisible(R.id.authenticated, viewModelAuth.authenticated)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -90,18 +90,18 @@ class AppActivity : AppCompatActivity() {
 
                     R.id.signin -> {
                         findNavController(R.id.nav_host_fragment).navigate(R.id.login_fragment)
-                        AppAuth.getInstance().authState
+                        appAuth.authState
                         true
                     }
 
                     R.id.signup -> {
                         findNavController(R.id.nav_host_fragment).navigate(R.id.registr_fragment)
-                        AppAuth.getInstance().authState
+                        appAuth.authState
                         true
                     }
 
                     R.id.signout -> {
-                        AppAuth.getInstance().removeAuth()
+                        appAuth.removeAuth()
                         true
                     }
 
@@ -110,7 +110,7 @@ class AppActivity : AppCompatActivity() {
             }
 
         })
-        AppAuth.getInstance().authState
+        appAuth.authState
 
     }
 

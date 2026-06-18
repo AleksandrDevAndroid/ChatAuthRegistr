@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    >
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -13,13 +15,13 @@
             android:id="@+id/updateList"
             android:layout_width="190dp"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             android:text="@string/update_list_posts"
+            android:visibility="gone"
             app:icon="@drawable/baseline_arrow_circle_up_24"
             app:iconPadding="12dp"
-                android:visibility="gone"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
@@ -64,11 +66,12 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        android:backgroundTint="#607d8b"
         android:clickable="true"
         android:contentDescription="@string/add_post"
         android:focusable="true"
-        android:layout_gravity="bottom|end"
         app:srcCompat="@drawable/ic_add_24dp" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

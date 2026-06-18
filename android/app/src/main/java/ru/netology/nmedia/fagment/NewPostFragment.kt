@@ -1,4 +1,4 @@
-package ru.netology.nmedia.activity
+package ru.netology.nmedia.fagment
 
 import android.app.Activity
 import android.os.Bundle
@@ -18,18 +18,20 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
 import ru.netology.nmedia.util.AndroidUtils
 import ru.netology.nmedia.util.StringArg
 import ru.netology.nmedia.viewmodel.PostViewModel
-
-
+@AndroidEntryPoint
 class NewPostFragment : Fragment() {
 
     companion object {
         var Bundle.textArg: String? by StringArg
     }
+
+
     private val viewModel: PostViewModel by activityViewModels()
     val startForProfileImageResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
@@ -40,7 +42,7 @@ class NewPostFragment : Fragment() {
                 val fileUri = data?.data!!
                 viewModel.changePhoto(fileUri, fileUri.toFile())
             } else {
-                Toast.makeText(requireContext(), "Task Cancelled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), R.string.error_task_cancelled, Toast.LENGTH_SHORT).show()
             }
         }
     override fun onCreateView(
@@ -71,12 +73,12 @@ class NewPostFragment : Fragment() {
 
         activity?.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_new_post, menu)
+                menuInflater.inflate(ru.netology.nmedia.R.menu.menu_new_post, menu)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.save -> {
+                    ru.netology.nmedia.R.id.save -> {
                         viewModel.changeContent(binding.edit.text.toString())
                         viewModel.save()
                         AndroidUtils.hideKeyboard(requireView())
@@ -90,16 +92,16 @@ class NewPostFragment : Fragment() {
         }, viewLifecycleOwner)
 
         binding.pickPhoto.setOnClickListener {
-            ImagePicker.with(this)
+            ImagePicker.Companion.with(this)
                 .crop()
                 .compress(2048)
                 .galleryOnly()
-                .galleryMimeTypes(arrayOf("image/png", "image/jepg"))
+                .galleryMimeTypes(arrayOf("image/png", "image/jpeg"))
                 .createIntent {intent -> startForProfileImageResult.launch(intent)}
         }
 
         binding.takePhoto.setOnClickListener {
-            ImagePicker.with(this)
+            ImagePicker.Companion.with(this)
                 .crop()
                 .compress(2048)
                 .cameraOnly()
