@@ -13,14 +13,17 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
+import javax.inject.Inject
 import kotlin.random.Random
 
-
+@AndroidEntryPoint
 class FCMService : FirebaseMessagingService() {
 
-
+    @Inject
+    lateinit var appAuth: AppAuth
     private val content = "content"
     private val channelId = "remote"
     private val gson = Gson()
@@ -48,15 +51,15 @@ class FCMService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         try {
             val push = gson.fromJson(message.data[content], PushWithId::class.java)
-            val myID = AppAuth.getInstance().authState.value.id
+            val myID = appAuth.authState.value.id
             when {
                 push.recipientId == null -> handlePush(push.content)
 
                 push.recipientId == myID -> handlePush(push.content)
 
-                push.recipientId == 0L && push.recipientId != myID -> AppAuth.getInstance().sendPushToken()
+                push.recipientId == 0L && push.recipientId != myID -> appAuth.sendPushToken()
 
-                push.recipientId != 0L && push.recipientId != myID -> AppAuth.getInstance().sendPushToken()
+                push.recipientId != 0L && push.recipientId != myID -> appAuth.sendPushToken()
 
             }
         } catch (e: Exception) {
@@ -66,7 +69,7 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken()
+        appAuth.sendPushToken()
     }
 
     fun notify(notification: Notification) {

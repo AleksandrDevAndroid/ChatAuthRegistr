@@ -10,8 +10,10 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
 }
 dependencyResolutionManagement {
+
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
@@ -20,6 +22,7 @@ dependencyResolutionManagement {
 
     }
 }
+
 
 rootProject.name = "NMedia"
 include(":app")

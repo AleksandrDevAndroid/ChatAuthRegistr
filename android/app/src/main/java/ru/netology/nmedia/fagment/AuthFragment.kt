@@ -9,12 +9,15 @@ import android.widget.Toast.LENGTH_LONG
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentAuthBinding
 import ru.netology.nmedia.viewmodel.AuthViewModel
 
+@AndroidEntryPoint
 class AuthFragment : Fragment() {
-    private val viewModelAuth: AuthViewModel by activityViewModels()
+
+    private val authViewModel: AuthViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,9 +33,9 @@ class AuthFragment : Fragment() {
             if (login.isEmpty() || pass.isEmpty()) {
                 Toast.makeText(context, R.string.emptyLoginOrPass, LENGTH_LONG).show()
             }
-            viewModelAuth.signIn(login, pass)
+            authViewModel.signIn(login, pass)
 
-            viewModelAuth.dataState.observe(viewLifecycleOwner) { state ->
+            authViewModel.dataState.observe(viewLifecycleOwner) { state ->
                 if (state.successes) {
                     findNavController().navigateUp()
                 } else Toast.makeText(context, "Incorrect login or pass", LENGTH_LONG).show()

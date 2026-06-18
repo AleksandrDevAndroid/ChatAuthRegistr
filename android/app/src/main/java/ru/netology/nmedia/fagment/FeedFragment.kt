@@ -1,5 +1,6 @@
-package ru.netology.nmedia.activity
+package ru.netology.nmedia.fagment
 
+import android.R
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
@@ -11,14 +12,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
-import ru.netology.nmedia.R
+import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
-import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
+@AndroidEntryPoint
 
 class FeedFragment : Fragment() {
 
@@ -29,9 +30,9 @@ class FeedFragment : Fragment() {
         AlertDialog.Builder(context)
             .setTitle("Don't enter in app")
             .setMessage("Please authorized in app")
-            .setIcon(android.R.drawable.ic_dialog_alert)
+            .setIcon(R.drawable.ic_dialog_alert)
             .setPositiveButton("Yes") { dialog, _ ->
-                findNavController().navigate(R.id.login_fragment)
+                findNavController().navigate(ru.netology.nmedia.R.id.login_fragment)
                 dialog.dismiss()
             }
             .setNegativeButton("No") { dialog, _ ->
@@ -72,13 +73,16 @@ class FeedFragment : Fragment() {
                 }
 
                 val shareIntent =
-                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
+                    Intent.createChooser(
+                        intent,
+                        getString(ru.netology.nmedia.R.string.chooser_share_post)
+                    )
                 startActivity(shareIntent)
             }
 
             override fun onOpen(post: Post) {
                 findNavController().navigate(
-                    R.id.action_feedFragment_to_showPhotoFragment2,
+                    ru.netology.nmedia.R.id.action_feedFragment_to_showPhotoFragment2,
                     Bundle().apply {
                         putString("url", post.attachment?.url)
                     }
@@ -92,8 +96,8 @@ class FeedFragment : Fragment() {
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.refreshing
             if (state.error) {
-                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                Snackbar.make(binding.root, ru.netology.nmedia.R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(ru.netology.nmedia.R.string.retry_loading) { viewModel.loadPosts() }
                     .show()
             }
         }
@@ -130,7 +134,7 @@ class FeedFragment : Fragment() {
                 showDialog()
                 return@setOnClickListener
             }
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            findNavController().navigate(ru.netology.nmedia.R.id.action_feedFragment_to_newPostFragment)
         }
         return binding.root
     }

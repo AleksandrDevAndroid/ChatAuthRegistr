@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/feedFragment"
-        android:name="ru.netology.nmedia.activity.FeedFragment"
+        android:name="ru.netology.nmedia.fagment.FeedFragment"
         android:label="fragment_feed"
         tools:layout="@layout/fragment_feed">
         <action
@@ -25,7 +25,19 @@
         <action
             android:id="@+id/action_feedFragment_to_registr_fragment"
             app:destination="@id/registr_fragment" />
+        <action
+            android:id="@+id/action_feedFragment_to_showPostFragment"
+            app:destination="@id/showPostFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/showPostFragment"
+        android:name="ru.netology.nmedia.fagment.ShowPostFragment"
+        android:label="show_post_fragment"
+        tools:layout="@layout/fragment_show_post">
+        <action
+            android:id="@+id/action_showPostFragment_to_showPhotoFragment"
+            app:destination="@id/showPhotoFragment" />
     </fragment>
     <fragment
         android:id="@+id/registr_fragment"
@@ -43,7 +55,7 @@
     </fragment>
     <fragment
         android:id="@+id/newPostFragment"
-        android:name="ru.netology.nmedia.activity.NewPostFragment"
+        android:name="ru.netology.nmedia.fagment.NewPostFragment"
         android:label="fragment_new_post"
         tools:layout="@layout/fragment_new_post" />
     <fragment

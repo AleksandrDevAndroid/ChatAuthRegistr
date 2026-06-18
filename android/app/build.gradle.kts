@@ -1,15 +1,25 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.hilt)
+
 }
 
 android {
     namespace = "ru.netology.nmedia"
     compileSdk = 36
+
+    packaging {
+        resources {
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/io.netty.versions.properties"
+        }
+    }
 
     defaultConfig {
         applicationId = "ru.netology.nmedia"
@@ -50,7 +60,14 @@ kotlin {
         jvmTarget.set(JvmTarget.JVM_17)
     }
 }
+
+
 dependencies {
+    implementation(libs.firebase.appdistribution.gradle)
+    //Hilt/Dagger
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -59,15 +76,22 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    // Room
     implementation(libs.androidx.room)
     ksp(libs.androidx.room.compiler)
+
+    // Firebase
     implementation(platform(libs.firebase))
     implementation(libs.firebase.messaging)
     implementation(libs.play.services)
+
+    // Сеть и картинки
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation(libs.glide)
     implementation(libs.kotlinx.coroutines.android)
+
+    // Остальные утилиты
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.imagepicker)
     implementation(libs.ucrop)

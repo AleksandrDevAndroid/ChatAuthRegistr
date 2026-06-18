@@ -41,4 +41,5 @@
     <string name="notification_from_app">У вас есть уведомление\n</string>
     <string name="incorrect_pass">Неверный пароль</string>
     <string name="something_wrong">Что-то пошло не так</string>
+    <string name="error_task_cancelled">"Ошибка выполнения "</string>
 </resources>
