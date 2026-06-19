@@ -34,7 +34,9 @@ class AppActivity : AppCompatActivity() {
     @Inject
     lateinit var appAuth: AppAuth
     @Inject
-    lateinit var firebaseModule : FirebaseModule
+    lateinit var firebaseModule : FirebaseMessaging
+    @Inject
+    lateinit var googlePlayServicesAvailable : GoogleApiAvailability
 
     private val viewModelAuth: AuthViewModel by viewModels()
 
@@ -136,7 +138,7 @@ class AppActivity : AppCompatActivity() {
 
 
     private fun checkGoogleApiAvailability() {
-        with(firebaseModule.googleApiAvailability()) {
+        with(googlePlayServicesAvailable) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -152,7 +154,7 @@ class AppActivity : AppCompatActivity() {
             )
                 .show()
         }
-        firebaseModule.firebaseMessaging().token.addOnSuccessListener {
+        firebaseModule.token.addOnSuccessListener {
             println(it)
         }
     }
