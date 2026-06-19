@@ -19,18 +19,23 @@ import androidx.navigation.findNavController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
+import dagger.Module
 import dagger.hilt.android.AndroidEntryPoint
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.fagment.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.service.di.FirebaseModule
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
-   @Inject
-   lateinit var appAuth: AppAuth
+    @Inject
+    lateinit var appAuth: AppAuth
+    @Inject
+    lateinit var firebaseModule : FirebaseModule
+
     private val viewModelAuth: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -128,8 +133,10 @@ class AppActivity : AppCompatActivity() {
         requestPermissions(arrayOf(permission), 1)
     }
 
+
+
     private fun checkGoogleApiAvailability() {
-        with(GoogleApiAvailability.getInstance()) {
+        with(firebaseModule.googleApiAvailability()) {
             val code = isGooglePlayServicesAvailable(this@AppActivity)
             if (code == ConnectionResult.SUCCESS) {
                 return@with
@@ -145,8 +152,7 @@ class AppActivity : AppCompatActivity() {
             )
                 .show()
         }
-
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
+        firebaseModule.firebaseMessaging().token.addOnSuccessListener {
             println(it)
         }
     }
