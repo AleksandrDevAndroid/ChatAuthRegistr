@@ -49,7 +49,7 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
     @OptIn(ExperimentalCoroutinesApi::class)
     val data: Flow<PagingData<Post>> = appAuth.authState
         .flatMapLatest { (myId, _) ->
-            repository.data.map { posts -> posts.map { it.copy(ownerByMe = myId == it.authorId) } }
+                repository.data.map { posts -> posts.map {post -> post.copy(ownerByMe = myId == post.authorId) } }
         }.flowOn(Dispatchers.Default)
         .cachedIn(viewModelScope)
 
