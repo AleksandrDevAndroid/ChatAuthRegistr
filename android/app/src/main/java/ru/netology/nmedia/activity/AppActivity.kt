@@ -20,23 +20,30 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.components.SingletonComponent
 import ru.netology.nmedia.R
 import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.fagment.NewPostFragment.Companion.textArg
 import ru.netology.nmedia.databinding.ActivityAppBinding
+import ru.netology.nmedia.repository.PostRepositoryImpl
 import ru.netology.nmedia.service.di.FirebaseModule
 import ru.netology.nmedia.viewmodel.AuthViewModel
+import ru.netology.nmedia.viewmodel.PostViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
     @Inject
     lateinit var appAuth: AppAuth
+
     @Inject
-    lateinit var firebaseModule : FirebaseMessaging
+    lateinit var firebaseModule: FirebaseMessaging
+
     @Inject
-    lateinit var googlePlayServicesAvailable : GoogleApiAvailability
+    lateinit var googlePlayServicesAvailable: GoogleApiAvailability
 
     private val viewModelAuth: AuthViewModel by viewModels()
 
@@ -92,6 +99,7 @@ class AppActivity : AppCompatActivity() {
                 menu.setGroupVisible(R.id.authenticated, viewModelAuth.authenticated)
             }
 
+
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
 
@@ -109,6 +117,7 @@ class AppActivity : AppCompatActivity() {
 
                     R.id.signout -> {
                         appAuth.removeAuth()
+
                         true
                     }
 
@@ -134,7 +143,6 @@ class AppActivity : AppCompatActivity() {
 
         requestPermissions(arrayOf(permission), 1)
     }
-
 
 
     private fun checkGoogleApiAvailability() {

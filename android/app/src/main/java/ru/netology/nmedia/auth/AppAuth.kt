@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import ru.netology.nmedia.api.PostsApiService
 import ru.netology.nmedia.dto.PushToken
+import ru.netology.nmedia.repository.PostRepositoryImpl
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -64,6 +65,7 @@ class AppAuth @Inject constructor(
         }
         sendPushToken()
     }
+
 
     @InstallIn(SingletonComponent::class)
     @EntryPoint

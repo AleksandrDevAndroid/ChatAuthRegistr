@@ -10,15 +10,20 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.viewmodel.AuthViewModel
 import ru.netology.nmedia.viewmodel.PostViewModel
+
 @AndroidEntryPoint
 
 class FeedFragment : Fragment() {
@@ -58,11 +63,14 @@ class FeedFragment : Fragment() {
                     showDialog()
                     return
                 }
-                viewModel.likeById(post.id)
+                viewModel.likeById(post.id, post.likedByMe)
+                viewModel.refreshPosts()
             }
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
+                viewModel.refreshPosts()
+
             }
 
             override fun onShare(post: Post) {
@@ -92,29 +100,46 @@ class FeedFragment : Fragment() {
 
         })
         binding.list.adapter = adapter
+
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
             binding.swiperefresh.isRefreshing = state.refreshing
             if (state.error) {
-                Snackbar.make(binding.root, ru.netology.nmedia.R.string.error_loading, Snackbar.LENGTH_LONG)
-                    .setAction(ru.netology.nmedia.R.string.retry_loading) { viewModel.loadPosts() }
+                Snackbar.make(
+                    binding.root,
+                    ru.netology.nmedia.R.string.error_loading,
+                    Snackbar.LENGTH_LONG
+                )
+                    .setAction(ru.netology.nmedia.R.string.retry_loading) { viewModel.refreshPosts() }
                     .show()
             }
         }
-        viewModel.data.observe(viewLifecycleOwner) { state ->
-            adapter.submitList(state.posts)
-            binding.emptyText.isVisible = state.empty
-            binding.list.post {
-                binding.list.smoothScrollToPosition(0)
-            }
-        }
+
+
         viewModel.newerCount.observe(viewLifecycleOwner) { state ->
             binding.updateList.isVisible = state > 0
-            println(state)
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            lifecycleScope.launchWhenCreated {
+                viewModel.data.collectLatest {
+                    adapter.submitData(it)
+
+                }
+            }
+        }
+
+        lifecycleScope.launchWhenCreated {
+            adapter.loadStateFlow.collectLatest {
+                binding.swiperefresh.isRefreshing = it.refresh is LoadState.Loading
+                        || it.append is LoadState.Loading
+                        || it.prepend is LoadState.Loading
+            }
+        }
+
+
         binding.swiperefresh.setOnRefreshListener {
-            viewModel.refreshPosts()
+            adapter.refresh()
             binding.list.post {
                 binding.list.smoothScrollToPosition(0)
             }

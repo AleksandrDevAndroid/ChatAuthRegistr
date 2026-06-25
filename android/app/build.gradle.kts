@@ -63,11 +63,10 @@ kotlin {
 
 
 dependencies {
+    implementation(libs.androidx.room.ktx)
     implementation(libs.firebase.appdistribution.gradle)
-    //Hilt/Dagger
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -76,24 +75,19 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
-    // Room
     implementation(libs.androidx.room)
     ksp(libs.androidx.room.compiler)
-
-    // Firebase
     implementation(platform(libs.firebase))
     implementation(libs.firebase.messaging)
     implementation(libs.play.services)
-
-    // Сеть и картинки
     implementation(libs.converter.gson)
     implementation(libs.logging.interceptor)
     implementation(libs.glide)
     implementation(libs.kotlinx.coroutines.android)
-
-    // Остальные утилиты
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.imagepicker)
     implementation(libs.ucrop)
     coreLibraryDesugaring(libs.desugaring)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.room.paging)
 }

@@ -1,6 +1,8 @@
 package ru.netology.nmedia.repository
 
-import dagger.hilt.android.AndroidEntryPoint
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -15,7 +17,6 @@ import ru.netology.nmedia.dto.Attachment
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
-import ru.netology.nmedia.entity.toDto
 import ru.netology.nmedia.entity.toEntity
 import ru.netology.nmedia.enum.AttachmentType
 import ru.netology.nmedia.error.ApiError
@@ -28,20 +29,24 @@ import javax.inject.Inject
 
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
-    private val apiService: PostsApiService
+    private val apiService: PostsApiService,
 ) :
     PostRepository, AuthRepository {
     @Inject
     lateinit var appAuth: AppAuth
 
+    override val data = Pager(
+        config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+        pagingSourceFactory = {
+           PostPagingSource(apiService,dao)
+        }
+    ).flow
+
+
 
     override suspend fun updateStatus() {
         dao.updateStatus()
     }
-
-    override val data = dao.getAll()
-        .map(List<PostEntity>::toDto)
-        .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
@@ -60,10 +65,10 @@ class PostRepositoryImpl @Inject constructor(
     }
 
 
-    override fun getNewerCount(id: Long): Flow<Int> = flow {
+    override fun getNewerCount(): Flow<Int> = flow {
         while (true) {
             delay(10_000L)
-            val response = apiService.getNewer(id)
+            val response = apiService.getNewer(dao.getLastId())
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -94,7 +99,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun removeById(id: Long) {
-        val oldPost = data.first().find { it.id == id } ?: return
+        val oldPost = dao.getId(id)
         dao.removeById(oldPost.id)
         try {
             val response = apiService.removeById(id)
@@ -102,18 +107,18 @@ class PostRepositoryImpl @Inject constructor(
                 throw ApiError(response.code(), response.message())
             }
         } catch (e: IOException) {
-            dao.insert(PostEntity.fromDto(oldPost))
+            dao.insert(PostEntity.fromDto(oldPost.toDto()))
             throw NetworkError
         } catch (e: Exception) {
-            dao.insert(PostEntity.fromDto(oldPost))
+            dao.insert(PostEntity.fromDto(oldPost.toDto()))
             throw UnknownError
         }
     }
 
     override suspend fun likeById(id: Long) {
-        val oldPost = data.first().find { it.id == id } ?: return
+        val oldPost = dao.getId(id)
         val newPost = oldPost.copy(likedByMe = true, likes = +1)
-        dao.insert(PostEntity.fromDto(newPost, status = true))
+        dao.insert(PostEntity.fromDto(newPost.toDto(), status = true))
         try {
             val response = apiService.likeById(id)
             if (!response.isSuccessful) {
@@ -130,9 +135,9 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun dislikeById(id: Long) {
-        val oldPost = data.first().find { it.id == id } ?: return
+        val oldPost = dao.getId(id)
         val newPost = oldPost.copy(likedByMe = false, likes = 0)
-        dao.insert(PostEntity.fromDto(newPost, status = true))
+        dao.insert(PostEntity.fromDto(newPost.toDto(), status = true))
         try {
             val response = apiService.dislikeById(id)
             if (!response.isSuccessful) {
@@ -211,6 +216,7 @@ class PostRepositoryImpl @Inject constructor(
             val body =
                 response.body() ?: throw ApiError(response.code(), response.message())
             appAuth.setAuth(body.id, body.token)
+
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
