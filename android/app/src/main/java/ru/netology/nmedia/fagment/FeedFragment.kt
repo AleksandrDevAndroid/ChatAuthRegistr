@@ -116,15 +116,10 @@ class FeedFragment : Fragment() {
         }
 
 
-        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            binding.updateList.isVisible = state > 0
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             lifecycleScope.launchWhenCreated {
                 viewModel.data.collectLatest {
                     adapter.submitData(it)
-
                 }
             }
         }
@@ -140,11 +135,8 @@ class FeedFragment : Fragment() {
 
         binding.swiperefresh.setOnRefreshListener {
             adapter.refresh()
-            binding.list.post {
-                binding.list.smoothScrollToPosition(0)
-            }
-
         }
+
         binding.updateList.setOnClickListener {
             viewModel.updateStatus()
             viewModel.refreshPosts()

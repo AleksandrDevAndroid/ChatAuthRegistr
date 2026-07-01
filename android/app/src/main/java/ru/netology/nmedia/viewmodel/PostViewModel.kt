@@ -58,11 +58,6 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
     val dataState: LiveData<FeedModelState>
         get() = _dataState
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val newerCount: LiveData<Int> = repository.getNewerCount()
-        .catch { e -> e.printStackTrace() }
-        .asLiveData(Dispatchers.Default)
-
     private val edited = MutableLiveData(empty)
     private val _photo = MutableLiveData<PhotoModel>(noPhoto)
     private val _photoCreated = SingleLiveEvent<Unit>()
@@ -78,7 +73,6 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
     fun refreshPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(refreshing = true)
-            repository.getAll()
             _dataState.value = FeedModelState()
         } catch (e: Exception) {
             _dataState.value = FeedModelState(error = true)

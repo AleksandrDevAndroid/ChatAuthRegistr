@@ -20,8 +20,6 @@ import ru.netology.nmedia.dto.PushToken
 
 
 interface PostsApiService {
-    @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
 
     @GET("posts/latest")
     suspend fun getLatest(@Query("count") count: Int): Response<List<Post>>

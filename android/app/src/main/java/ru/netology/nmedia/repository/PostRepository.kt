@@ -10,8 +10,6 @@ import java.io.File
 interface PostRepository {
     suspend fun updateStatus()
     val data: Flow<PagingData<Post>>
-    suspend fun getAll()
-    fun getNewerCount(): Flow<Int>
     suspend fun save(post: Post)
     suspend fun removeById(id: Long)
     suspend fun likeById(id: Long)
