@@ -27,8 +27,9 @@ interface PostDao {
     @Query("UPDATE PostEntity SET status = 1 WHERE status = 0")
     suspend fun updateStatus()
 
-    @Query("SELECT * FROM PostEntity WHERE status = 1 ORDER BY id DESC")
-    fun getAll(): Flow<List<PostEntity>>
+   /* @Query("SELECT * FROM  POSTENTITY WHERE status = 0")
+    suspend fun getNewPost()*/
+
 
     @Query("SELECT COUNT(*) == 0 FROM PostEntity")
     suspend fun isEmpty(): Boolean

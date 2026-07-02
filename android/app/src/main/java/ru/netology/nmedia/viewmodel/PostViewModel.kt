@@ -135,6 +135,13 @@ class PostViewModel @Inject constructor(private val repository: PostRepository, 
     }
 
 
+    fun getNewPost() {
+        viewModelScope.launch {
+            val id =  repository
+        }
+    }
+
+
     fun updateStatus() {
         viewModelScope.launch {
             repository.updateStatus()

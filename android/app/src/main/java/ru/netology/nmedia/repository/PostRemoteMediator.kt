@@ -40,8 +40,7 @@ class PostRemoteMediator(
                 }
 
                 PREPEND -> {
-                    val id = postRemoteKeyDao.max()
-                    service.getBefore(id, state.config.pageSize)
+                    return MediatorResult.Success(true)
                 }
 
                 APPEND -> {
@@ -77,24 +76,26 @@ class PostRemoteMediator(
                             )
                         } else postRemoteKeyDao.inset(
                             PostRemoteKeyEntity(
-                                PostRemoteKeyEntity.KeyType.BEFORE,
+                                PostRemoteKeyEntity.KeyType.AFTER,
                                 body.first().id
                             )
                         )
                     }
 
-                    PREPEND -> {}
+                    PREPEND -> {
+                        MediatorResult.Success(true)
+                    }
 
                     APPEND -> {
                         postRemoteKeyDao.inset(
-                            PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.AFTER, body.last().id)
+                            PostRemoteKeyEntity(PostRemoteKeyEntity.KeyType.BEFORE, body.last().id)
                         )
                     }
                 }
+                dao.insert(body.toEntity())
             }
-
-            dao.insert(body.toEntity())
             return MediatorResult.Success(body.isEmpty())
+
 
         } catch (e: Exception) {
             if (e is CancellationException) {

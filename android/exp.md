@@ -1,4 +1,4 @@
-Задача. Refresh to Prepend
+RefЗадача. Refresh to Prepend
 Описание
 Измените код из лекции так, чтобы:
 
