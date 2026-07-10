@@ -42,4 +42,5 @@
     <string name="incorrect_pass">Неверный пароль</string>
     <string name="something_wrong">Что-то пошло не так</string>
     <string name="error_task_cancelled">"Ошибка выполнения "</string>
+    <string name="image_ad">ImageAd</string>
 </resources>

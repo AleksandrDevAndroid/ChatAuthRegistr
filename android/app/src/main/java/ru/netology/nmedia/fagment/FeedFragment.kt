@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import ru.netology.nmedia.adapter.LoadPostAdapter
 import ru.netology.nmedia.adapter.OnInteractionListener
 import ru.netology.nmedia.adapter.PostsAdapter
 import ru.netology.nmedia.databinding.FragmentFeedBinding
@@ -96,14 +97,15 @@ class FeedFragment : Fragment() {
                     }
                 )
             }
-
-
         })
-        binding.list.adapter = adapter
+
+        binding.list.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = LoadPostAdapter { adapter.retry() },
+            footer = LoadPostAdapter { adapter.retry() }
+        )
 
         viewModel.dataState.observe(viewLifecycleOwner) { state ->
             binding.progress.isVisible = state.loading
-            binding.swiperefresh.isRefreshing = state.refreshing
             if (state.error) {
                 Snackbar.make(
                     binding.root,
@@ -127,14 +129,13 @@ class FeedFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             adapter.loadStateFlow.collectLatest {
                 binding.swiperefresh.isRefreshing = it.refresh is LoadState.Loading
-                        || it.append is LoadState.Loading
-                        || it.prepend is LoadState.Loading
             }
         }
 
 
         binding.swiperefresh.setOnRefreshListener {
             adapter.refresh()
+
         }
 
         binding.updateList.setOnClickListener {

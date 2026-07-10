@@ -41,4 +41,5 @@
     <string name="incorrect_pass">Incorrect password</string>
     <string name="something_wrong">Something wrong</string>
     <string name="error_task_cancelled">"Ошибка выполнения "</string>
+    <string name="image_ad">ImageAd</string>
 </resources>

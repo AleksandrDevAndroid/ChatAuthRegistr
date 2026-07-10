@@ -1,9 +1,11 @@
 package ru.netology.nmedia.repository
 
+import android.annotation.SuppressLint
 import  androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.insertSeparators
 import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -16,39 +18,65 @@ import ru.netology.nmedia.auth.AppAuth
 import ru.netology.nmedia.dao.PostDao
 import ru.netology.nmedia.dao.PostRemoteKeyDao
 import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.dto.Ad
 import ru.netology.nmedia.dto.Attachment
+import ru.netology.nmedia.dto.DateSeparator
+import ru.netology.nmedia.dto.FeedItem
 import ru.netology.nmedia.dto.Media
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.entity.PostEntity
 import ru.netology.nmedia.enum.AttachmentType
+import ru.netology.nmedia.enum.DatePublished
 import ru.netology.nmedia.error.ApiError
 import ru.netology.nmedia.error.NetworkError
 import ru.netology.nmedia.error.UnknownError
 import java.io.File
 import java.io.IOException
+import java.util.UUID.randomUUID
 import javax.inject.Inject
+import kotlin.random.Random
 
 class PostRepositoryImpl @Inject constructor(
     private val dao: PostDao,
     private val apiService: PostsApiService,
     private val postRemoteKeyDao: PostRemoteKeyDao,
     private val appDb: AppDb
-) :
-    PostRepository, AuthRepository {
+) : PostRepository, AuthRepository {
     @Inject
     lateinit var appAuth: AppAuth
 
+    @SuppressLint("CheckResult")
     @OptIn(ExperimentalPagingApi::class)
-    override val data: Flow<PagingData<Post>> = Pager(
+    override val data: Flow<PagingData<FeedItem>> = Pager(
         config = PagingConfig(pageSize = 10, enablePlaceholders = false),
         pagingSourceFactory = { dao.getPagingSource() },
         remoteMediator = PostRemoteMediator(apiService, dao, postRemoteKeyDao, appDb)
-    ).flow
-        .map { pagingData ->
-            pagingData.map {
-                it.toDto()
+    ).flow.map { pagingData ->
+        pagingData.map(PostEntity::toDto).insertSeparators { previous, next ->
+            if (previous == null && next != null) {
+                return@insertSeparators DateSeparator(
+                    id = randomUUID().mostSignificantBits,
+                    text = DatePublished.getTime(next.published).day
+                )
+            }
+            if (previous != null && next != null) {
+                val previousPeriod = DatePublished.getTime(previous.published)
+                val nextPeriod = DatePublished.getTime(next.published)
+
+                if (previousPeriod != nextPeriod) {
+                    return@insertSeparators DateSeparator(
+                        id = randomUUID().mostSignificantBits,
+                        text = nextPeriod.day
+                    )
+                }
+            }
+            if (previous?.id?.rem(5) == 0L) {
+                Ad(Random.nextLong(), "figma.jpg")
+            } else {
+                null
             }
         }
+    }
 
     override suspend fun updateStatus() {
         dao.updateStatus()
@@ -97,8 +125,7 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            val body =
-                response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(PostEntity.fromDto(body, status = true))
         } catch (e: IOException) {
             throw NetworkError
@@ -116,8 +143,7 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            val body =
-                response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(PostEntity.fromDto(body, status = true))
         } catch (e: IOException) {
             throw NetworkError
@@ -136,8 +162,7 @@ class PostRepositoryImpl @Inject constructor(
     private suspend fun upload(file: File?): Media {
         try {
             val part = MultipartBody.Part.createFormData(
-                "file", file!!.name,
-                file.asRequestBody()
+                "file", file!!.name, file.asRequestBody()
             )
             val response = apiService.upload(part)
             if (!response.isSuccessful) {
@@ -158,8 +183,7 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            val body =
-                response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
             appAuth.setAuth(body.id, body.token)
         } catch (e: IOException) {
             throw NetworkError
@@ -169,10 +193,7 @@ class PostRepositoryImpl @Inject constructor(
     }
 
     override suspend fun singUp(
-        login: String,
-        pass: String?,
-        name: String?,
-        media: File?
+        login: String, pass: String?, name: String?, media: File?
     ) {
         try {
             val part = if (media != null && media.exists()) {
@@ -186,8 +207,7 @@ class PostRepositoryImpl @Inject constructor(
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            val body =
-                response.body() ?: throw ApiError(response.code(), response.message())
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
             appAuth.setAuth(body.id, body.token)
 
         } catch (e: IOException) {
